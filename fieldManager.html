@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Field Manager - Zovatu</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <i class="fas fa-cog"></i> Field Manager
+  </div>
+  <a href="dashboard.html" class="back-link">
+    <i class="fas fa-arrow-left"></i> Back
+  </a>
+</header>
+
+<main>
+  <form id="fieldManagerForm">
+    <!-- Field list will be rendered here -->
+  </form>
+  <button class="save-btn" type="button" onclick="saveSettings()">Update</button>
+  <button class="save-btn" type="button" onclick="resetToDefault()" style="background: #dc3545; margin-top: 10px;">Reset Default</button>
+</main>
+
+
+
+
+
+
+
+
+<script type="module" src="js/fieldManager.js"></script>
+</body>
+</html>
+
+
