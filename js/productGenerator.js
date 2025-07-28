@@ -308,8 +308,12 @@ export function addCustomField() {
 }
 
 export function saveDraft() {
+  // URL থেকে edit ID চেক করুন
+  const urlParams = new URLSearchParams(window.location.search);
+  const editIdFromUrl = urlParams.get("edit");
+
   const draft = {
-    id: localStorage.getItem("editDraftId") || Date.now(),
+    id: editIdFromUrl || Date.now(), // Edit mode এ existing ID ব্যবহার করুন
     timestamp: new Date().toISOString(),
     name: getVal("name"), 
     code: getVal("code"), 
@@ -345,6 +349,13 @@ export function saveDraft() {
   
   localStorage.setItem("drafts", JSON.stringify(drafts));
   localStorage.removeItem("editDraftId");
+
+  // Edit mode এ success message আলাদা
+  if (editIdFromUrl) {
+    showToast("Product updated successfully!", "success");
+  } else {
+    showToast("Draft saved successfully!", "success");
+  }
 }
 
 export function loadDraftToForm(id) {
