@@ -1,4 +1,5 @@
-import { showToast, loadLanguage, translateElement } from './utils.js';
+import { showToast, getStorageItem, setStorageItem, translateElement, loadLanguage } from './utils.js';
+import { cacheManager } from './cache-manager.js';
 
 let currentSearchTerm = '';
 let currentFilter = 'all';
@@ -305,5 +306,99 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   // Auto-refresh every 30 seconds
   setInterval(renderDrafts, 30000);
+});
+
+
+
+// Cache Management Functions
+window.refreshCacheStats = function() {
+  try {
+    const stats = cacheManager.getCacheStats();
+    
+    document.getElementById('cacheSize').textContent = stats.cacheSize;
+    document.getElementById('cacheItems').textContent = stats.cacheItems;
+    document.getElementById('cachePercentage').textContent = stats.cachePercentage + '%';
+    
+    // Update progress bar color based on usage
+    const percentageElement = document.getElementById('cachePercentage');
+    if (stats.cachePercentage > 50) {
+      percentageElement.style.color = '#f44336';
+    } else if (stats.cachePercentage > 30) {
+      percentageElement.style.color = '#ff9800';
+    } else {
+      percentageElement.style.color = '#4CAF50';
+    }
+    
+    showToast('Cache statistics refreshed', 'info');
+  } catch (error) {
+    console.error('Error refreshing cache stats:', error);
+    showToast('Error refreshing cache statistics', 'error');
+  }
+};
+
+window.clearSoftwareCache = function() {
+  // Show confirmation dialog
+  const confirmed = confirm(
+    'Are you sure you want to clear the software cache?\n\n' +
+    'This will:\n' +
+    '✓ Remove temporary data that may slow down the software\n' +
+    '✓ Keep your saved products and settings safe\n' +
+    '✓ May improve software performance\n\n' +
+    'Click OK to proceed.'
+  );
+  
+  if (!confirmed) {
+    return;
+  }
+  
+  try {
+    // Show loading state
+    const clearBtn = document.querySelector('.clear-btn');
+    const originalText = clearBtn.innerHTML;
+    clearBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Clearing...';
+    clearBtn.disabled = true;
+    
+    // Clear cache with a small delay for better UX
+    setTimeout(() => {
+      const result = cacheManager.clearCache();
+      
+      if (result.success) {
+        showToast(result.message, 'success');
+        
+        // Update stats after clearing
+        setTimeout(() => {
+          refreshCacheStats();
+        }, 500);
+        
+        // Show success state
+        clearBtn.innerHTML = '<i class="fas fa-check"></i> Cleared!';
+        clearBtn.style.background = '#4CAF50';
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+          clearBtn.innerHTML = originalText;
+          clearBtn.style.background = '';
+          clearBtn.disabled = false;
+        }, 2000);
+        
+      } else {
+        showToast('Failed to clear cache: ' + result.message, 'error');
+        clearBtn.innerHTML = originalText;
+        clearBtn.disabled = false;
+      }
+    }, 1000);
+    
+  } catch (error) {
+    console.error('Error clearing cache:', error);
+    showToast('Error clearing cache: ' + error.message, 'error');
+  }
+};
+
+// Initialize cache stats on page load
+document.addEventListener('DOMContentLoaded', () => {
+  // Small delay to ensure DOM is fully loaded
+  setTimeout(() => {
+    refreshCacheStats();
+  }, 500);
 });
 
