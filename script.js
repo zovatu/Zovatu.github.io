@@ -299,7 +299,6 @@ function setupKeyboardShortcuts() {
   });
 }
 
-
 // Enhanced Event Listeners
 window.addEventListener("DOMContentLoaded", async () => {
   if (!localStorage.getItem("loggedInUser")) {
@@ -325,7 +324,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       if (validation.isValid) {
         generateProduct();
       } else {
-        showToast(`Please fill the following fields: ${validation.errors.join(", ")}`, "error");
+        showToast(`Please fill the following fields: ${validation.errors.join(', ')}`, "error");
       }
     });
   }
@@ -337,47 +336,24 @@ window.addEventListener("DOMContentLoaded", async () => {
   setupKeyboardShortcuts();
   startAutoSave();
   
-  // ✅ নতুন কোড - URL থেকে edit parameter চেক করুন
-  const urlParams = new URLSearchParams(window.location.search);
-  const editId = urlParams.get("edit");
-
-  if (editId) {
-    const editingDraftString = localStorage.getItem("editingDraft");
-    if (editingDraftString) {
-      try {
-        const draftToEdit = JSON.parse(editingDraftString);
-        populateFormWithEditData(draftToEdit);
-        
-        // Generate button এর text পরিবর্তন করুন
-        const generateBtn = document.getElementById("generateBtn");
-        if (generateBtn) {
-          generateBtn.innerHTML = 
-            '<i class="fas fa-save"></i> Update Product';
-        }
-        
-        showToast("Product loaded for editing", "info");
-        
-        // localStorage থেকে editingDraft মুছে দিন
-        localStorage.removeItem("editingDraft");
-      } catch (error) {
-        console.error("Error loading edit data:", error);
-        showToast("Error loading product data", "error");
-      }
-    }
+  const draftId = localStorage.getItem("editDraftId");
+  if (draftId) {
+    loadDraftToForm(draftId);
+    showToast("Draft loaded. Edit and update.", "info");
   }
   
-  const formInputs = document.querySelectorAll("input, textarea, select");
+  const formInputs = document.querySelectorAll('input, textarea, select');
   formInputs.forEach(input => {
-    input.addEventListener("input", () => {
-      input.classList.remove("form-error", "form-success");
-      const errorMsg = input.parentNode.querySelector(".error-message");
+    input.addEventListener('input', () => {
+      input.classList.remove('form-error', 'form-success');
+      const errorMsg = input.parentNode.querySelector('.error-message');
       if (errorMsg) errorMsg.remove();
     });
   });
 
   // Listen for storage changes to update currency symbols
-  window.addEventListener("storage", (e) => {
-    if (e.key === "selectedCurrency") {
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'selectedCurrency') {
       updateCurrencySymbol();
     }
   });
@@ -397,72 +373,43 @@ window.copyToClipboard = copyToClipboard;
 window.validateForm = validateForm;
 window.updateCurrencySymbol = updateCurrencySymbol;
 
-// ✅ নতুন ফাংশন যোগ করুন
-function populateFormWithEditData(draft) {
-  if (!draft) return;
 
-  // Basic fields populate করুন
-  const basicFields = [
-    "name",
-    "code",
-    "price",
-    "offer",
-    "unit",
-    "qty",
-    "brand",
-    "size",
-    "color",
-    "delivery",
-    "status",
-    "category",
-    "desc",
-    "video",
-    "wa",
-  ];
+// Import cache manager
+import { cacheManager } from './js/cache-manager.js';
+
+// Quick Cache Clear Function for Dashboard
+window.quickCacheClear = function() {
+  const confirmed = confirm(
+    'Clear software cache?\n\n' +
+    'This will remove temporary data that may slow down the software.\n' +
+    'Your saved products and settings will remain safe.\n\n' +
+    'Continue?'
+  );
   
-  basicFields.forEach(fieldId => {
-    const element = document.getElementById(fieldId);
-    if (element && draft[fieldId]) {
-      element.value = draft[fieldId];
-    }
-  });
-
-  // Images populate করুন
-  const imageContainer = document.getElementById("imageInputs");
-  if (imageContainer && draft.images && draft.images.length > 0) {
-    imageContainer.innerHTML = ""; // Clear existing
-    
-    draft.images.forEach((imageUrl, index) => {
-      addImageInput(); // This function should create a new input field
-      const allImageInputs = imageContainer.querySelectorAll(".img-url");
-      if (allImageInputs[index]) {
-        allImageInputs[index].value = imageUrl;
-      }
-    });
-  } else {
-    addImageInput(); // Add at least one empty input if no images
+  if (!confirmed) {
+    return;
   }
-
-  // Custom fields populate করুন
-  const customFieldsContainer = document.getElementById("customFields");
-  if (customFieldsContainer && draft.customFields && draft.customFields.length > 0) {
-    customFieldsContainer.innerHTML = ""; // Clear existing
+  
+  try {
+    const result = cacheManager.clearCache();
     
-    draft.customFields.forEach((field, index) => {
-      addCustomField(); // This function should create a new custom field group
-      const customGroups = customFieldsContainer.querySelectorAll(".custom-field-group");
-      const currentGroup = customGroups[customGroups.length - 1];
+    if (result.success) {
+      showToast('Cache cleared successfully! ' + result.message, 'success');
       
-      if (currentGroup) {
-        const keyInput = currentGroup.querySelector(".custom-key");
-        const valueInput = currentGroup.querySelector(".custom-value");
-        
-        if (keyInput) keyInput.value = field.key || "";
-        if (valueInput) valueInput.value = field.value || "";
-      }
-    });
-  } else {
-    addCustomField(); // Add one empty group if no custom fields
+      // Optional: Refresh the page after a short delay
+      setTimeout(() => {
+        if (confirm('Cache cleared! Refresh page for best performance?')) {
+          window.location.reload();
+        }
+      }, 2000);
+      
+    } else {
+      showToast('Failed to clear cache: ' + result.message, 'error');
+    }
+    
+  } catch (error) {
+    console.error('Error in quick cache clear:', error);
+    showToast('Error clearing cache: ' + error.message, 'error');
   }
-}
+};
 

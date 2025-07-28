@@ -423,7 +423,132 @@ button[onclick*="parentElement.remove"]:hover {
   to { transform: rotate(360deg); }
 }
 
-/* ✅ Responsive Design (General) */
+/* Cache Management Styles */
+.cache-info-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 15px;
+}
+
+.cache-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.cache-stat-item {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-left: 4px solid #007bff;
+}
+
+.cache-stat-number {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.cache-stat-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cache-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.cache-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cache-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.refresh-btn {
+  background: #17a2b8;
+  color: white;
+}
+
+.refresh-btn:hover {
+  background: #138496;
+}
+
+.clear-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.clear-btn:hover {
+  background: #c82333;
+}
+
+.cache-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cache-description {
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 14px;
+  color: #1565c0;
+}
+
+.cache-description i {
+  margin-right: 8px;
+  color: #2196f3;
+}
+
+/* Responsive cache management */
+@media (max-width: 768px) {
+  .cache-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .cache-actions {
+    flex-direction: column;
+  }
+  
+  .cache-btn {
+    justify-content: center;
+  }
+}
+
+/* Animation for cache stats update */
+.cache-stat-number {
+  transition: all 0.3s ease;
+}
+
+.cache-stat-number.updating {
+  transform: scale(1.1);
+  color: #007bff;
+}
+(General) */
 @media (max-width: 1024px) {
   main {
     padding: 15px;

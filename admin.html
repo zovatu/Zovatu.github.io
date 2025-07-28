@@ -62,6 +62,38 @@
     </div>
   </div>
 
+  <!-- Cache Management Section -->
+  <div class="admin-controls">
+    <h2><i class="fas fa-broom"></i> Software Cache Management</h2>
+    <div class="cache-info-section">
+      <div class="cache-stats">
+        <div class="cache-stat-item">
+          <div class="cache-stat-number" id="cacheSize">0 KB</div>
+          <div class="cache-stat-label">Cache Size</div>
+        </div>
+        <div class="cache-stat-item">
+          <div class="cache-stat-number" id="cacheItems">0</div>
+          <div class="cache-stat-label">Cache Items</div>
+        </div>
+        <div class="cache-stat-item">
+          <div class="cache-stat-number" id="cachePercentage">0%</div>
+          <div class="cache-stat-label">Storage Usage</div>
+        </div>
+      </div>
+      <div class="cache-actions">
+        <button onclick="refreshCacheStats()" class="cache-btn refresh-btn">
+          <i class="fas fa-sync-alt"></i> Refresh Stats
+        </button>
+        <button onclick="clearSoftwareCache()" class="cache-btn clear-btn">
+          <i class="fas fa-trash-alt"></i> Clear Cache
+        </button>
+      </div>
+      <div class="cache-description">
+        <p><i class="fas fa-info-circle"></i> This will clear temporary data that may slow down the software while keeping your saved products and settings safe.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Admin Controls -->
   <div class="admin-controls">
     <h2 data-i18n="saved_product_list"><i class="fas fa-box"></i> Saved Product Management</h2>
