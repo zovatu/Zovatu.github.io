@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zovatu Dashboard</title>
+  <link rel="stylesheet" href="style_improved.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="header">
+  <div class="left-icons">
+    <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="logo"><i class="fas fa-toolbox"></i> Zovatu</div>
+  <a class="telegram-icon" href="https://t.me/yourchannel" target="_blank"><i class="fab fa-telegram"></i></a>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <button class="close-sidebar" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+  <a href="tutorial.html"><i class="fas fa-book"></i> Tutorial</a>
+  <a href="admin.html"><i class="fas fa-user-shield"></i> Admin Panel</a>
+  <a href="fieldManager.html"><i class="fas fa-cogs"></i> Field Customize</a>
+  <!-- Cache Clear Option -->
+  <a href="#" onclick="quickCacheClear()"><i class="fas fa-broom"></i> Clear Cache</a>
+
+  <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+  <div class="theme-download-box">
+    <div class="theme-header">
+      <i class="fab fa-blogger-b"></i>
+      <div class="logo-text">G9Theme</div>
+    </div>
+    <p>Download theme for your blog.</p>
+    <button id="downloadThemeBtn" onclick="downloadTheme()">Download Theme</button>
+    <div id="downloadTimer" style="display:none;"></div>
+  </div>
+</div>
+
+<main>
+  <div class="form-wrapper">
+    <div id="formFields">
+      <input type="text" id="name" placeholder="Product Name">
+      <input type="text" id="code" placeholder="Product Code">
+      <input type="number" id="price" placeholder="Price (৳)">
+      <input type="number" id="offer" placeholder="Offer Price (Optional)">
+      <input type="text" id="unit" placeholder="Unit (e.g., Pcs, Kg)">
+      <input type="number" id="qty" placeholder="Quantity (Qty)">
+      <input type="text" id="brand" placeholder="Brand / Company">
+      <input type="text" id="size" placeholder="Size Option">
+      <input type="text" id="color" placeholder="Color Option">
+      <input type="text" id="delivery" placeholder="Delivery Time">
+      <input type="text" id="status" placeholder="Status">
+      <input type="text" id="category" placeholder="Category">
+      <textarea id="desc" rows="3" placeholder="Product Description"></textarea>
+      <input type="url" id="video" placeholder="Video Link (YouTube)">
+      <input type="tel" id="wa" placeholder="WhatsApp Number (8801XXXXXXXXXX)">
+
+      <div id="imageInputs">
+        <input type="url" class="img-url" placeholder="Image URL">
+      </div>
+
+      <div id="customFields">
+        <div class="custom-field-group">
+          <input type="text" class="custom-key" placeholder="Title e.g., Warranty">
+          <input type="text" class="custom-value" placeholder="Value e.g., 3 Months">
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button onclick="addCustomField()" type="button"><i class="fas fa-plus"></i> Add Custom Info</button>
+        <button onclick="addImageField()" type="button"><i class="fas fa-image"></i> Add More Images</button>
+      </div>
+    </div>
+
+    <br />
+    <button id="generateBtn"><i class="fas fa-magic"></i> Generate</button>
+    
+    <!-- Action Buttons Row -->
+    <div class="button-row">
+      <button id="copyBtn"><i class="fas fa-copy"></i> Copy Result</button>
+      <button id="editBtn" style="display: none;"><i class="fas fa-edit"></i> Edit Data</button>
+    </div>
+  </div>
+
+  <!-- Enhanced Output Section -->
+  <div class="output" id="output" style="display: none;">
+    <div class="output-header">
+      <h3><i class="fas fa-code"></i> Generated Code</h3>
+      <div class="output-actions">
+        <button onclick="copyToClipboard()" class="copy-btn-small">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+        <button onclick="clearOutput()" class="clear-btn-small">
+          <i class="fas fa-trash"></i> Clear
+        </button>
+      </div>
+    </div>
+    <div class="output-content" id="outputContent">
+      <!-- Generated content will appear here -->
+    </div>
+  </div>
+
+  <!-- Enhanced Live Preview Section -->
+  <div class="live-preview" id="preview" style="display: none;">
+    <div class="output-header">
+      <h3><i class="fas fa-eye"></i> Live Preview</h3>
+      <div class="output-actions">
+        <button onclick="togglePreviewMode()" class="preview-toggle-btn">
+          <i class="fas fa-expand"></i> Full View
+        </button>
+      </div>
+    </div>
+    <div class="preview-content" id="previewContent">
+      <!-- Live preview will appear here -->
+    </div>
+  </div>
+</main>
+
+<!-- Toast Notification Container -->
+<div id="toastContainer"></div>
+
+<script type="module" src="script_improved.js"></script>
+</body>
+</html>
+
