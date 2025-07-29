@@ -186,29 +186,51 @@ function addErrorMessage(element, message) {
   element.parentNode.insertBefore(errorDiv, element.nextSibling);
 }
 
-// Enhanced Auto-save Functionality
+// Enhanced Auto-save Functionality with Debouncing
 let autoSaveInterval;
+let autoSaveTimeout;
 
 function startAutoSave() {
   if (autoSaveInterval) {
     clearInterval(autoSaveInterval);
   }
   
+  // Check every 30 seconds, but only save if there are changes
   autoSaveInterval = setInterval(() => {
     const name = document.getElementById("name")?.value.trim();
     const code = document.getElementById("code")?.value.trim();
     
     if (name && code) {
-      saveDraft();
-      showToast("Auto-save completed", "info");
+      debouncedAutoSave();
     }
   }, 30000);
+}
+
+// Debounced auto-save function to prevent frequent saves
+function debouncedAutoSave() {
+  if (autoSaveTimeout) {
+    clearTimeout(autoSaveTimeout);
+  }
+  
+  autoSaveTimeout = setTimeout(() => {
+    try {
+      saveDraft();
+      showToast("Auto-save completed", "info");
+    } catch (error) {
+      console.error("Auto-save failed:", error);
+      // Don't show error toast for auto-save failures to avoid annoying users
+    }
+  }, 2000); // Wait 2 seconds after last change before saving
 }
 
 function stopAutoSave() {
   if (autoSaveInterval) {
     clearInterval(autoSaveInterval);
     autoSaveInterval = null;
+  }
+  if (autoSaveTimeout) {
+    clearTimeout(autoSaveTimeout);
+    autoSaveTimeout = null;
   }
 }
 

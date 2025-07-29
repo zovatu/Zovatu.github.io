@@ -249,16 +249,51 @@ input, textarea, select {
   color: var(--white-text);
   font-size: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-speed) ease;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--orange-accent);
   box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.2);
+  transform: translateY(-1px);
 }
 
 input::placeholder, textarea::placeholder {
   color: var(--placeholder-text);
+}
+
+/* Form validation states */
+input.form-error, textarea.form-error, select.form-error {
+  border-color: var(--red-primary);
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.2);
+  animation: shake 0.5s ease-in-out;
+}
+
+input.form-success, textarea.form-success, select.form-success {
+  border-color: var(--green-primary);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.error-message {
+  color: var(--red-primary);
+  font-size: 14px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ✅ Professional Button System */

@@ -1,4 +1,4 @@
-import { showToast, loadLanguage, translateElement } from './js/utils.js';
+import { showToast, loadLanguage, translateElement, handleError } from './js/utils.js';
 
 // Add loading animation CSS
 const loadingCSS = `
@@ -63,10 +63,22 @@ function loginUser() {
       }
     })
     .catch(error => {
+      // Enhanced error handling
+      const errorInfo = handleError(error, 'login process', false);
+      
       // Error state
       loginBtn.innerHTML = '<i class="fas fa-times"></i> <span>Login Failed</span>';
       loginBtn.style.background = '#ef4444';
-      showToast(`${translateElement("login_failed")}: ${error.message}`, "error");
+      
+      // Show specific error message
+      let errorMessage = translateElement("login_failed");
+      if (error.message.includes('not found') || error.message.includes('404')) {
+        errorMessage = translateElement("user_not_found");
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        errorMessage = "Network error. Please check your connection.";
+      }
+      
+      showToast(errorMessage, "error");
       
       // Reset button after 2 seconds
       setTimeout(() => {
