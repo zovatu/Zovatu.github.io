@@ -162,8 +162,7 @@ function editDraft(id) {
     return;
   }
   
-  // Store the draft to edit in localStorage
-  localStorage.setItem("editingDraft", JSON.stringify(draft));
+  localStorage.setItem("editDraftId", id);
   
   // Redirect to dashboard with edit mode
   window.location.href = "dashboard.html?edit=" + id;

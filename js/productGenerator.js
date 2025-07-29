@@ -132,8 +132,14 @@ export function generateProduct() {
 
   document.getElementById("output").textContent = html;
   document.getElementById("preview").innerHTML = html;
-  saveDraft();
-  showToast("Product generated successfully!", "success");
+  
+  // Check if we're in edit mode and handle accordingly
+  const isEditing = localStorage.getItem("editDraftId");
+  if (isEditing) {
+    saveDraft(); // This will handle the update/new product logic
+  } else {
+    saveDraft(); // This will create a new product
+  }
   
   // Enhanced success animation with multiple visual feedback
   const generateBtn = document.getElementById("generateBtn");
@@ -142,7 +148,7 @@ export function generateProduct() {
   
   // Success state with animation
   generateBtn.style.background = "linear-gradient(135deg, #28a745, #20c997)";
-  generateBtn.innerHTML = "Complete!";
+  generateBtn.innerHTML = isEditing ? '<i class="fas fa-check"></i> Updated!' : '<i class="fas fa-check"></i> Generated!';
   generateBtn.style.transform = "scale(1.02)";
   generateBtn.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
   
@@ -335,19 +341,33 @@ export function saveDraft() {
   };
 
   let drafts = JSON.parse(localStorage.getItem("drafts") || "[]");
-  const existingProductIndex = drafts.findIndex(d => d.code === draft.code && d.id !== draft.id);
+  const isEditing = localStorage.getItem("editDraftId");
 
-  if (existingProductIndex !== -1) {
-    showToast("Product with this code already exists. Please use a unique code or update the existing product.", "error");
-    return;
-  }
-
-  const index = drafts.findIndex(d => d.id == draft.id);
-  
-  if (index !== -1) {
-    drafts[index] = { ...drafts[index], ...draft };
+  if (isEditing) {
+    const originalDraft = drafts.find(d => d.id == isEditing);
+    if (originalDraft && originalDraft.code !== draft.code) {
+      // If product code changed, treat as new product
+      draft.id = Date.now(); // Assign new ID
+      drafts.push(draft);
+      showToast("Product code changed. Saved as a new product.", "success");
+    } else {
+      // Update existing product
+      const index = drafts.findIndex(d => d.id == draft.id);
+      if (index !== -1) {
+        drafts[index] = { ...drafts[index], ...draft };
+        showToast("Product updated successfully!", "success");
+      }
+    }
   } else {
+    // Check for existing product code when creating new product
+    const existingProductWithCode = drafts.find(d => d.code === draft.code);
+    if (existingProductWithCode) {
+      showToast("Product with this code already exists. Please use a unique code.", "error");
+      return;
+    }
+    draft.id = Date.now(); // Assign new ID for new product
     drafts.push(draft);
+    showToast("Product generated successfully!", "success");
   }
   
   localStorage.setItem("drafts", JSON.stringify(drafts));
@@ -356,30 +376,31 @@ export function saveDraft() {
 
 export function loadDraftToForm(id) {
   const draft = JSON.parse(localStorage.getItem("drafts") || "[]").find(d => d.id == id);
-  if (!draft) return;
+  if (!draft) {
+    showToast("Product not found", "error");
+    return;
+  }
   localStorage.setItem("editDraftId", id);
   
-  // Clear existing form
-  document.getElementById("imageInputs").innerHTML = 
-    `<input type="url" class="img-url" placeholder="Image URL">`;
-  document.getElementById("customFields").innerHTML = 
-    `<div class="custom-field-group"><input type="text" class="custom-key" placeholder="Title (e.g., Warranty)"><input type="text" class="custom-value" placeholder="Value (e.g., 3 Months)"></div>`;
+  // Clear existing form first
+  document.getElementById("imageInputs").innerHTML = "";
+  document.getElementById("customFields").innerHTML = "";
   
   // Load basic fields
   const fieldIds = ["name", "code", "price", "offer", "unit", "qty", "brand", "size", "color", "delivery", "status", "category", "desc", "video", "wa"];
   fieldIds.forEach(fieldId => {
     const element = document.getElementById(fieldId);
-    if (element && draft[fieldId]) {
-      element.value = draft[fieldId];
+    if (element) {
+      element.value = draft[fieldId] || "";
     }
   });
 
   // Load images
   const imgContainer = document.getElementById("imageInputs");
-  imgContainer.innerHTML = "";
   if (draft.images && draft.images.length > 0) {
     draft.images.forEach((url, index) => {
       if (index === 0) {
+        // First image input
         const input = document.createElement("input");
         input.type = "url";
         input.className = "img-url";
@@ -387,12 +408,38 @@ export function loadDraftToForm(id) {
         input.value = url;
         imgContainer.appendChild(input);
       } else {
-        addImageInput();
-        const inputs = imgContainer.querySelectorAll(".img-url");
-        inputs[inputs.length - 1].value = url;
+        // Additional image inputs with remove button
+        const wrapper = document.createElement("div");
+        wrapper.style.display = "flex";
+        wrapper.style.gap = "10px";
+        wrapper.style.alignItems = "center";
+        wrapper.style.marginTop = "10px";
+        
+        const input = document.createElement("input");
+        input.type = "url";
+        input.className = "img-url";
+        input.placeholder = `Image URL ${index + 1}`;
+        input.value = url;
+        
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.innerHTML = "×";
+        removeBtn.style.background = "#dc3545";
+        removeBtn.style.color = "white";
+        removeBtn.style.border = "none";
+        removeBtn.style.borderRadius = "50%";
+        removeBtn.style.width = "30px";
+        removeBtn.style.height = "30px";
+        removeBtn.style.cursor = "pointer";
+        removeBtn.onclick = () => wrapper.remove();
+        
+        wrapper.appendChild(input);
+        wrapper.appendChild(removeBtn);
+        imgContainer.appendChild(wrapper);
       }
     });
   } else {
+    // Add default first image input if no images
     const input = document.createElement("input");
     input.type = "url";
     input.className = "img-url";
@@ -402,20 +449,39 @@ export function loadDraftToForm(id) {
 
   // Load custom fields
   const customContainer = document.getElementById("customFields");
-  customContainer.innerHTML = "";
   if (draft.customFields && draft.customFields.length > 0) {
-    draft.customFields.forEach(field => {
-      addCustomField();
-      const groups = customContainer.querySelectorAll(".custom-field-group");
-      const lastGroup = groups[groups.length - 1];
-      lastGroup.querySelector(".custom-key").value = field.key;
-      lastGroup.querySelector(".custom-value").value = field.value;
+    draft.customFields.forEach((field, index) => {
+      const group = document.createElement("div");
+      group.className = "custom-field-group";
+      group.style.display = "flex";
+      group.style.gap = "10px";
+      group.style.alignItems = "center";
+      group.style.marginTop = "10px";
+      
+      group.innerHTML = `
+        <input type="text" class="custom-key" placeholder="Title (e.g., Warranty)" style="flex: 1;" value="${field.key}">
+        <input type="text" class="custom-value" placeholder="Value (e.g., 6 Months)" style="flex: 1;" value="${field.value}">
+        <button type="button" onclick="this.parentElement.remove(); showToast('Custom field removed.', 'success')" 
+                style="background:#dc3545;color:white;border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;">
+          ×
+        </button>
+      `;
+      
+      customContainer.appendChild(group);
     });
   } else {
-    addCustomField();
+    // Add default custom field if none exist
+    const group = document.createElement("div");
+    group.className = "custom-field-group";
+    group.innerHTML = `
+      <input type="text" class="custom-key" placeholder="Title (e.g., Warranty)">
+      <input type="text" class="custom-value" placeholder="Value (e.g., 3 Months)">
+    `;
+    customContainer.appendChild(group);
   }
   
-  showToast("Draft loaded successfully.", "success");}
+  showToast("Draft loaded successfully.", "success");
+}
 
 export function applyFieldVisibility() {
   const fieldVisibility = JSON.parse(localStorage.getItem("fieldVisibility") || "{}");
