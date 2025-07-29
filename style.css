@@ -423,12 +423,13 @@ button[onclick*="parentElement.remove"]:hover {
   to { transform: rotate(360deg); }
 }
 
-/* Cache Management Styles */
+/* Cache Management Styles - Updated to match theme */
 .cache-info-section {
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 20px;
-  margin-top: 15px;
+  background: var(--medium-gray);
+  border-radius: var(--border-radius-xl);
+  padding: 25px;
+  margin-top: 20px;
+  box-shadow: var(--box-shadow-medium);
 }
 
 .cache-stats {
@@ -439,26 +440,26 @@ button[onclick*="parentElement.remove"]:hover {
 }
 
 .cache-stat-item {
-  background: white;
+  background: var(--dark-gray);
   padding: 15px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-medium);
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border-left: 4px solid #007bff;
+  box-shadow: var(--box-shadow-light);
+  border: 1px solid var(--light-gray);
 }
 
 .cache-stat-number {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-  color: #333;
+  color: var(--orange-accent);
   margin-bottom: 5px;
 }
 
 .cache-stat-label {
-  font-size: 12px;
-  color: #666;
+  font-size: 13px;
+  color: var(--light-text);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
 .cache-actions {
@@ -466,62 +467,67 @@ button[onclick*="parentElement.remove"]:hover {
   gap: 10px;
   margin-bottom: 15px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .cache-btn {
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--border-radius-medium);
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 8px;
+  box-shadow: var(--box-shadow-light);
+  color: var(--white-text);
 }
 
 .cache-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
 
 .refresh-btn {
-  background: #17a2b8;
-  color: white;
+  background: var(--blue-primary);
 }
 
 .refresh-btn:hover {
-  background: #138496;
+  background: var(--blue-hover);
 }
 
 .clear-btn {
-  background: #dc3545;
-  color: white;
+  background: var(--red-primary);
 }
 
 .clear-btn:hover {
-  background: #c82333;
+  background: var(--red-hover);
 }
 
 .cache-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .cache-description {
-  background: #e3f2fd;
-  border: 1px solid #bbdefb;
-  border-radius: 6px;
-  padding: 12px;
+  background: var(--dark-gray);
+  border: 1px solid var(--light-gray);
+  border-radius: var(--border-radius-medium);
+  padding: 15px;
   font-size: 14px;
-  color: #1565c0;
+  color: var(--light-text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .cache-description i {
-  margin-right: 8px;
-  color: #2196f3;
+  color: var(--orange-accent);
+  font-size: 18px;
 }
 
 /* Responsive cache management */
@@ -546,7 +552,7 @@ button[onclick*="parentElement.remove"]:hover {
 
 .cache-stat-number.updating {
   transform: scale(1.1);
-  color: #007bff;
+  color: var(--info-blue);
 }
 (General) */
 @media (max-width: 1024px) {
