@@ -336,10 +336,14 @@ window.addEventListener("DOMContentLoaded", async () => {
   setupKeyboardShortcuts();
   startAutoSave();
   
-  const draftId = localStorage.getItem("editDraftId");
-  if (draftId) {
-    loadDraftToForm(draftId);
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get('edit');
+
+  if (editId) {
+    loadDraftToForm(editId);
     showToast("Draft loaded. Edit and update.", "info");
+  } else {
+    localStorage.removeItem("editDraftId"); // Clear editDraftId if not in edit mode
   }
   
   const formInputs = document.querySelectorAll('input, textarea, select');
