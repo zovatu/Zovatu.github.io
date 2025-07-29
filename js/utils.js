@@ -203,9 +203,38 @@ export function getStorageItem(key, defaultValue = null) {
 }
 
 // Enhanced error handling
-export function handleError(error, context = '') {
+export function handleError(error, context = '', showToUser = true) {
   console.error(`Error in ${context}:`, error);
-  showToast(`An error occurred${context ? ` in ${context}` : ''}: ${error.message}`, 'error');
+  
+  // Log additional context for debugging
+  if (context) {
+    console.error(`Context: ${context}`);
+  }
+  
+  // Show user-friendly error message
+  if (showToUser) {
+    let userMessage = 'An unexpected error occurred.';
+    
+    // Customize message based on error type
+    if (error.name === 'NetworkError' || error.message.includes('fetch')) {
+      userMessage = 'Network connection error. Please check your internet connection.';
+    } else if (error.name === 'SyntaxError') {
+      userMessage = 'Data format error. Please try again.';
+    } else if (error.name === 'TypeError') {
+      userMessage = 'Application error. Please refresh the page and try again.';
+    } else if (error.message) {
+      userMessage = error.message;
+    }
+    
+    showToast(userMessage, 'error');
+  }
+  
+  return {
+    error: error,
+    context: context,
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent
+  };
 }
 
 // Performance monitoring

@@ -1,4 +1,4 @@
-import { showToast } from './utils.js';
+import { showToast, sanitizeInput } from './utils.js';
 
 // Helper function to get element value
 function getVal(id) {
@@ -16,14 +16,25 @@ function isValidURL(string) {
 }
 
 export function generateProduct() {
-  const name = getVal("name"), code = getVal("code"), price = parseFloat(getVal("price"));
-  const offer = parseFloat(getVal("offer")), unit = getVal("unit"), qty = getVal("qty");
-  const brand = getVal("brand"), size = getVal("size"), color = getVal("color");
-  const delivery = getVal("delivery"), status = getVal("status"), category = getVal("category");
-  const desc = getVal("desc"), video = getVal("video"), wa = getVal("wa");
+  // Get and sanitize all input values
+  const name = sanitizeInput(getVal("name"));
+  const code = sanitizeInput(getVal("code"));
+  const price = parseFloat(getVal("price"));
+  const offer = parseFloat(getVal("offer"));
+  const unit = sanitizeInput(getVal("unit"));
+  const qty = sanitizeInput(getVal("qty"));
+  const brand = sanitizeInput(getVal("brand"));
+  const size = sanitizeInput(getVal("size"));
+  const color = sanitizeInput(getVal("color"));
+  const delivery = sanitizeInput(getVal("delivery"));
+  const status = sanitizeInput(getVal("status"));
+  const category = sanitizeInput(getVal("category"));
+  const desc = sanitizeInput(getVal("desc"));
+  const video = getVal("video"); // URL validation will be done separately
+  const wa = getVal("wa"); // Phone validation will be done separately
   const imgs = document.querySelectorAll(".img-url");
-  const currency = localStorage.getItem("selectedCurrency") || "৳"; // Get selected currency
-  const whatsappLang = localStorage.getItem("whatsappLanguage") || "en"; // Get selected WhatsApp language
+  const currency = localStorage.getItem("selectedCurrency") || "৳";
+  const whatsappLang = localStorage.getItem("whatsappLanguage") || "en";
 
   // Enhanced validation with specific error messages
   const errors = [];
@@ -317,25 +328,25 @@ export function saveDraft() {
   const draft = {
     id: localStorage.getItem("editDraftId") || Date.now(),
     timestamp: new Date().toISOString(),
-    name: getVal("name"), 
-    code: getVal("code"), 
+    name: sanitizeInput(getVal("name")), 
+    code: sanitizeInput(getVal("code")), 
     price: getVal("price"), 
     offer: getVal("offer"),
-    unit: getVal("unit"),
+    unit: sanitizeInput(getVal("unit")),
     qty: getVal("qty"),
-    brand: getVal("brand"), 
-    size: getVal("size"), 
-    color: getVal("color"),
-    delivery: getVal("delivery"), 
-    status: getVal("status"), 
-    category: getVal("category"),
-    desc: getVal("desc"), 
+    brand: sanitizeInput(getVal("brand")), 
+    size: sanitizeInput(getVal("size")), 
+    color: sanitizeInput(getVal("color")),
+    delivery: sanitizeInput(getVal("delivery")), 
+    status: sanitizeInput(getVal("status")), 
+    category: sanitizeInput(getVal("category")),
+    desc: sanitizeInput(getVal("desc")), 
     video: getVal("video"), 
     wa: getVal("wa"),
     images: [...document.querySelectorAll(".img-url")].map(i => i.value.trim()).filter(Boolean),
     customFields: [...document.querySelectorAll(".custom-field-group")].map(group => ({
-      key: group.querySelector(".custom-key").value.trim(),
-      value: group.querySelector(".custom-value").value.trim()
+      key: sanitizeInput(group.querySelector(".custom-key").value.trim()),
+      value: sanitizeInput(group.querySelector(".custom-value").value.trim())
     })).filter(field => field.key && field.value),
     verified: false
   };
