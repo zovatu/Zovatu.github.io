@@ -335,6 +335,13 @@ export function saveDraft() {
   };
 
   let drafts = JSON.parse(localStorage.getItem("drafts") || "[]");
+  const existingProductIndex = drafts.findIndex(d => d.code === draft.code && d.id !== draft.id);
+
+  if (existingProductIndex !== -1) {
+    showToast("Product with this code already exists. Please use a unique code or update the existing product.", "error");
+    return;
+  }
+
   const index = drafts.findIndex(d => d.id == draft.id);
   
   if (index !== -1) {
@@ -350,15 +357,16 @@ export function saveDraft() {
 export function loadDraftToForm(id) {
   const draft = JSON.parse(localStorage.getItem("drafts") || "[]").find(d => d.id == id);
   if (!draft) return;
-  
   localStorage.setItem("editDraftId", id);
   
   // Clear existing form
-  document.getElementById("imageInputs").innerHTML = '<input type="url" class="img-url" placeholder="Image URL">';
-  document.getElementById("customFields").innerHTML = '<div class="custom-field-group"><input type="text" class="custom-key" placeholder="Title (e.g., Warranty)"><input type="text" class="custom-value" placeholder="Value (e.g., 3 Months)"></div>';
+  document.getElementById("imageInputs").innerHTML = 
+    `<input type="url" class="img-url" placeholder="Image URL">`;
+  document.getElementById("customFields").innerHTML = 
+    `<div class="custom-field-group"><input type="text" class="custom-key" placeholder="Title (e.g., Warranty)"><input type="text" class="custom-value" placeholder="Value (e.g., 3 Months)"></div>`;
   
   // Load basic fields
-  const fieldIds = ['name', 'code', 'price', 'offer', 'unit', 'qty', 'brand', 'size', 'color', 'delivery', 'status', 'category', 'desc', 'video', 'wa'];
+  const fieldIds = ["name", "code", "price", "offer", "unit", "qty", "brand", "size", "color", "delivery", "status", "category", "desc", "video", "wa"];
   fieldIds.forEach(fieldId => {
     const element = document.getElementById(fieldId);
     if (element && draft[fieldId]) {
@@ -407,8 +415,7 @@ export function loadDraftToForm(id) {
     addCustomField();
   }
   
-  showToast("Draft loaded successfully.", "success");
-}
+  showToast("Draft loaded successfully.", "success");}
 
 export function applyFieldVisibility() {
   const fieldVisibility = JSON.parse(localStorage.getItem("fieldVisibility") || "{}");
