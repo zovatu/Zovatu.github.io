@@ -138,8 +138,8 @@ header.header {
 
 .close-sidebar {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 5px;
+  right: 5px;
   background: none;
   color: var(--white-text);
   border: none;
